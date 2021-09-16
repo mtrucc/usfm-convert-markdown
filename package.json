@@ -1,0 +1,11 @@
+{
+  "name": "usfm-convert-markdown",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/mtrucc/usfm-convert-markdown.git",
+  "author": "maotianrun <maotianrun@yesway.cn>",
+  "license": "MIT",
+  "dependencies": {
+    "fs-extra": "^10.0.0"
+  }
+}
