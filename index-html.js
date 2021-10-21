@@ -82,6 +82,9 @@ function formatChapters(chapter) {
       if (type == 'v') {
         return `<p><sup>${number}</sup>${format}</p>`;
       }
+      if ([...tList].indexOf(type) >= 0) {
+        return `<p>${format}</p>`;
+      }
       return format;
     })
     .join('\n');
@@ -236,7 +239,7 @@ function parseUsfm(lineList) {
         newLineItem = newLineItem.replace(/\\p/gm, '');
         newLineItem = newLineItem.replace(/\\b /gm, '');
         newLineItem = newLineItem.replace(/\\b/gm, '');
-        newLineItem = `${newLineItem}<br>`;
+        newLineItem = `${newLineItem}</br>`;
       }
 
       // Handling bolded
@@ -252,7 +255,11 @@ function parseUsfm(lineList) {
       if (tList.indexOf(type) > -1) {
         newLineItem = newLineItem.replace(/\\q1 /gm, '');
         newLineItem = newLineItem.replace(/\\q1/gm, '');
-        newLineItem = `&ensp;${newLineItem}`;
+        if (newLineItem == '') {
+          newLineItem = `${newLineItem}</br>`;
+        } else {
+          newLineItem = `&ensp;${newLineItem}`;
+        }
       }
 
       // Handling italics
