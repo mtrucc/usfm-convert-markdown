@@ -78,13 +78,38 @@ function formatHeader({ header, number }) {
 function formatChapters(chapter) {
   return chapter.content
     .map((e) => {
-      let { verseType, verseNumber, format } = e;
-      if (verseType == 'v') {
+      const { formatType, verseNumber, format } = e;
+      const sList = ['strong'];
+      const tList = ['tab'];
+      const pList = ['p'];
+      const nList = ['br'];
+      const hList = ['h3'];
+      const eList = ['em'];
+
+      if ([...pList].indexOf(formatType) >= 0) {
         return `<p><sup>${verseNumber}</sup>${format}</p>`;
       }
-      if ([...tList].indexOf(verseType) >= 0) {
-        return `<p>${format}</p>`;
+
+      if ([...sList].indexOf(formatType) >= 0) {
+        return `<strong>${format}</strong>`;
       }
+
+      if ([...tList].indexOf(formatType) >= 0) {
+        return `<p>&ensp;${format}</p>`;
+      }
+
+      if ([...nList].indexOf(formatType) >= 0) {
+        return `${format}</br>`;
+      }
+
+      if ([...hList].indexOf(formatType) >= 0) {
+        return `<h3>${format}</h3>`;
+      }
+
+      if ([...eList].indexOf(formatType) >= 0) {
+        return `<em>${format}</em>`;
+      }
+
       return format;
     })
     .join('\n');
@@ -242,7 +267,7 @@ function parseUsfm(lineList) {
         newLineItem = newLineItem.replace(/\\p/gm, '');
         newLineItem = newLineItem.replace(/\\b /gm, '');
         newLineItem = newLineItem.replace(/\\b/gm, '');
-        newLineItem = `${newLineItem}</br>`;
+        // newLineItem = `${newLineItem}</br>`;
         formatType = 'br';
       }
 
@@ -252,7 +277,7 @@ function parseUsfm(lineList) {
         newLineItem = newLineItem.replace(/\\s1/gm, '');
         newLineItem = newLineItem.replace(/\\s2 /gm, '');
         newLineItem = newLineItem.replace(/\\s2/gm, '');
-        newLineItem = `<strong>${newLineItem}</strong>`;
+        // newLineItem = `<strong>${newLineItem}</strong>`;
         formatType = 'strong';
       }
 
@@ -261,10 +286,10 @@ function parseUsfm(lineList) {
         newLineItem = newLineItem.replace(/\\q1 /gm, '');
         newLineItem = newLineItem.replace(/\\q1/gm, '');
         if (newLineItem == '') {
-          newLineItem = `${newLineItem}`;
+          // newLineItem = `${newLineItem}`;
           formatType = 'br';
         } else {
-          newLineItem = `&ensp;${newLineItem}`;
+          // newLineItem = `&ensp;${newLineItem}`;
           formatType = 'tab';
         }
       }
@@ -277,7 +302,7 @@ function parseUsfm(lineList) {
         newLineItem = newLineItem.replace(/\\d/, '');
         newLineItem = newLineItem.replace(/\\sp /, '');
         newLineItem = newLineItem.replace(/\\sp/, '');
-        newLineItem = `<em>${newLineItem}</em>`;
+        // newLineItem = `<em>${newLineItem}</em>`;
         formatType = 'em';
       }
 
@@ -285,7 +310,7 @@ function parseUsfm(lineList) {
       if (h3List.indexOf(type) > -1) {
         newLineItem = newLineItem.replace(/\\ms1 /, '');
         newLineItem = newLineItem.replace(/\\ms1/, '');
-        newLineItem = `<h3>${newLineItem}</h3>\n`;
+        // newLineItem = `<h3>${newLineItem}</h3>\n`;
         formatType = 'h3';
       }
 
