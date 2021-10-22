@@ -78,11 +78,11 @@ function formatHeader({ header, number }) {
 function formatChapters(chapter) {
   return chapter.content
     .map((e) => {
-      let { type, number, format } = e;
-      if (type == 'v') {
-        return `<p><sup>${number}</sup>${format}</p>`;
+      let { verseType, verseNumber, format } = e;
+      if (verseType == 'v') {
+        return `<p><sup>${verseNumber}</sup>${format}</p>`;
       }
-      if ([...tList].indexOf(type) >= 0) {
+      if ([...tList].indexOf(verseType) >= 0) {
         return `<p>${format}</p>`;
       }
       return format;
@@ -179,6 +179,8 @@ function parseUsfm(lineList) {
       let { verseType, verseNumber, verseVerse } =
         lineItem.match(verseRegex).groups;
 
+      let formatType = '';
+
       // More details in the regular match content, such as underscores, footnotes, and if found continue to analyze and process
       let moreRegexList = lineItem.match(moreRegex);
       if (moreRegexList && moreRegexList.length > 0) {
@@ -231,6 +233,7 @@ function parseUsfm(lineList) {
         newLineItem = verseVerse.replace(/(\s*$)/g, '');
         newLineItem = newLineItem.replace(/\\v /gm, '');
         newLineItem = `${newLineItem}`;
+        formatType = 'p';
       }
 
       // Handling line feeds
@@ -240,6 +243,7 @@ function parseUsfm(lineList) {
         newLineItem = newLineItem.replace(/\\b /gm, '');
         newLineItem = newLineItem.replace(/\\b/gm, '');
         newLineItem = `${newLineItem}</br>`;
+        formatType = 'br';
       }
 
       // Handling bolded
@@ -249,6 +253,7 @@ function parseUsfm(lineList) {
         newLineItem = newLineItem.replace(/\\s2 /gm, '');
         newLineItem = newLineItem.replace(/\\s2/gm, '');
         newLineItem = `<strong>${newLineItem}</strong>`;
+        formatType = 'strong';
       }
 
       // Handling indentations
@@ -256,9 +261,11 @@ function parseUsfm(lineList) {
         newLineItem = newLineItem.replace(/\\q1 /gm, '');
         newLineItem = newLineItem.replace(/\\q1/gm, '');
         if (newLineItem == '') {
-          newLineItem = `${newLineItem}</br>`;
+          newLineItem = `${newLineItem}`;
+          formatType = 'br';
         } else {
           newLineItem = `&ensp;${newLineItem}`;
+          formatType = 'tab';
         }
       }
 
@@ -271,6 +278,7 @@ function parseUsfm(lineList) {
         newLineItem = newLineItem.replace(/\\sp /, '');
         newLineItem = newLineItem.replace(/\\sp/, '');
         newLineItem = `<em>${newLineItem}</em>`;
+        formatType = 'em';
       }
 
       // Handling H3
@@ -278,6 +286,7 @@ function parseUsfm(lineList) {
         newLineItem = newLineItem.replace(/\\ms1 /, '');
         newLineItem = newLineItem.replace(/\\ms1/, '');
         newLineItem = `<h3>${newLineItem}</h3>\n`;
+        formatType = 'h3';
       }
 
       newLineItem = newLineItem.replace(/\\pn /gm, '<u>');
@@ -301,8 +310,9 @@ function parseUsfm(lineList) {
       let chapterItem = {
         text: lineItem,
         format: newLineItem,
-        number: verseNumber,
-        type: verseType,
+        verseNumber,
+        verseType,
+        formatType,
       };
 
       if (chapter[chapterIndex] && chapter[chapterIndex].content) {
