@@ -31,6 +31,20 @@ let iList = ['r', 'd', 'sp', 'qs'];
 // Footnote
 let fList = ['f'];
 
+// async function readFile() {
+//   let fileData = await fs.readFile('./cmn-cu89s_usfm/70-MATcmn-cu89s.usfm', 'utf8');
+//   // Split by newline
+//   let lineList = fileData.split('\n').slice(0, 20);
+//   // Parse the usfm file into json format
+//   let usfmJson = parseUsfm(lineList);
+//   let { bookCode } = usfmJson;
+//   let jsonFilePath = path.join(OUTDIR, bookCode, `${bookCode}.json`);
+//   fs.outputFile(jsonFilePath, '').then(() => {
+//     fs.writeJson(jsonFilePath, usfmJson);
+//   });
+//   generateFile(usfmJson);
+// }
+
 async function readFile() {
   let fileList = await fs.readdir(USFMDIR);
   for (let index = 0; index < fileList.length; index++) {
@@ -264,9 +278,9 @@ function parseUsfm(lineList) {
       // Handling line feeds
       if (nList.indexOf(type) > -1) {
         newLineItem = newLineItem.replace(/\\p /gm, '');
-        newLineItem = newLineItem.replace(/\\p/gm, '');
+        newLineItem = newLineItem.replace(/\\p(?!\S)/gm, '');
         newLineItem = newLineItem.replace(/\\b /gm, '');
-        newLineItem = newLineItem.replace(/\\b/gm, '');
+        newLineItem = newLineItem.replace(/\\b(?!\S)/gm, '');
         // newLineItem = `${newLineItem}</br>`;
         formatType = 'br';
       }
