@@ -47,24 +47,31 @@ let fList = ['f'];
 
 async function readFile() {
   let fileList = await fs.readdir(USFMDIR);
+  let allData = {}
   for (let index = 0; index < fileList.length; index++) {
     const fileName = fileList[index];
     let filePath = path.join(USFMDIR, fileName);
 
     // let fileData = await fs.readFile('./02-GENcmn-cu89s.usfm', 'utf8');
-    fs.readFile(filePath, 'utf8').then((fileData) => {
+    await fs.readFile(filePath, 'utf8').then((fileData) => {
       // Split by newline
       let lineList = fileData.split('\n');
       // Parse the usfm file into json format
       let usfmJson = parseUsfm(lineList);
       let { bookCode } = usfmJson;
       let jsonFilePath = path.join(OUTDIR, bookCode, `${bookCode}.json`);
-      fs.outputFile(jsonFilePath, '').then(() => {
-        fs.writeJson(jsonFilePath, usfmJson);
+      allData[bookCode] = usfmJson;
+      return fs.outputFile(jsonFilePath, '').then(() => {
+        return fs.writeJson(jsonFilePath, usfmJson);
       });
       // generateFile(usfmJson);
     });
   }
+  let allDataJsonFilePath = path.join(OUTDIR, `all.json`);
+  await fs.outputFile(allDataJsonFilePath, '').then(() => {
+    return fs.writeJson(allDataJsonFilePath, allData);
+  });
+  console.log('全部完成 :>> ');
 }
 
 function generateFile({ bookCode, bookName, chapter }) {
