@@ -62,7 +62,7 @@ async function readFile() {
       fs.outputFile(jsonFilePath, '').then(() => {
         fs.writeJson(jsonFilePath, usfmJson);
       });
-      generateFile(usfmJson);
+      // generateFile(usfmJson);
     });
   }
 }
